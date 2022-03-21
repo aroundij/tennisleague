@@ -1,14 +1,14 @@
+/* (C) 2022 */
 package io.aroundij.tennisleague.service;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import io.aroundij.tennisleague.domain.Game;
 import io.aroundij.tennisleague.domain.Match;
 import io.aroundij.tennisleague.domain.Player;
-import org.junit.jupiter.api.Test;
-
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class PlayGameTest {
 
@@ -29,7 +29,6 @@ class PlayGameTest {
         assertNotNull(game);
         assertEquals(0, game.getScorePlayerA());
         assertEquals(0, game.getScorePlayerB());
-
     }
 
     @Test
@@ -63,7 +62,7 @@ class PlayGameTest {
         assertEquals(expectedScore, scoreResult);
 
         // Given
-        expectedScore = 100;
+        expectedScore = 1;
         score = 40;
         // When
         scoreResult = PlayGame.incrementScore(score);
@@ -77,7 +76,6 @@ class PlayGameTest {
         scoreResult = PlayGame.incrementScore(score);
         // Then
         assertEquals(expectedScore, scoreResult);
-
     }
 
     @Test
