@@ -1,3 +1,4 @@
+/* (C) 2022 */
 package io.aroundij.tennisleague.domain;
 
 import java.time.LocalDateTime;
@@ -47,7 +48,10 @@ public class Game {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return scorePlayerA == game.scorePlayerA && scorePlayerB == game.scorePlayerB && startDate.equals(game.startDate) && winner == game.winner;
+        return scorePlayerA == game.scorePlayerA
+                && scorePlayerB == game.scorePlayerB
+                && startDate.equals(game.startDate)
+                && winner == game.winner;
     }
 
     @Override

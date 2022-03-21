@@ -1,3 +1,4 @@
+/* (C) 2022 */
 package io.aroundij.tennisleague.domain;
 
 import java.util.ArrayDeque;
