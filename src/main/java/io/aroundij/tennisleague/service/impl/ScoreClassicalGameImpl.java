@@ -2,7 +2,7 @@
 package io.aroundij.tennisleague.service.impl;
 
 import io.aroundij.tennisleague.domain.Game;
-import io.aroundij.tennisleague.domain.Match;
+import io.aroundij.tennisleague.domain.GameSet;
 import io.aroundij.tennisleague.service.ScoreService;
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ public class ScoreClassicalGameImpl implements ScoreService {
      * @return a String representation of the score of a match
      */
     @Override
-    public String getScore(Match match) {
+    public String getScore(GameSet match) {
         if (Objects.isNull(match)) return "ERROR : No match available !!";
         StringBuilder scoreBuilder = new StringBuilder();
         int i = 1;

@@ -1,7 +1,7 @@
 /* (C) 2022 */
 package io.aroundij.tennisleague;
 
-import io.aroundij.tennisleague.domain.Match;
+import io.aroundij.tennisleague.domain.GameSet;
 import io.aroundij.tennisleague.domain.Player;
 import io.aroundij.tennisleague.service.PlayGame;
 import io.aroundij.tennisleague.service.ScoreService;
@@ -19,7 +19,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         PlayGame playGame = new PlayClassicalGameImpl();
         ScoreService scoreService = new ScoreClassicalGameImpl();
-        Match match = playGame.startMatch();
+        GameSet match = playGame.startMatch();
         int i = 0;
 
         System.out.println("This is a Tennis Match !");
