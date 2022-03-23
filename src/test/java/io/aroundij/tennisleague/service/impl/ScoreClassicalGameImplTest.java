@@ -1,12 +1,13 @@
+/* (C) 2022 */
 package io.aroundij.tennisleague.service.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import io.aroundij.tennisleague.domain.Game;
 import io.aroundij.tennisleague.domain.GameScore;
 import io.aroundij.tennisleague.domain.Score;
 import io.aroundij.tennisleague.service.ScoreService;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ScoreClassicalGameImplTest {
 
@@ -43,7 +44,4 @@ class ScoreClassicalGameImplTest {
         String result = scoreService.getScore(game);
         assertEquals(expected, result);
     }
-
-
-
 }

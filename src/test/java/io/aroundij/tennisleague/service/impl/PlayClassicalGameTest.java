@@ -251,7 +251,6 @@ class PlayClassicalGameTest {
         Score expectedScoreA = Score.SCORE_15;
         Score expectedScoreB = Score.SCORE_0;
 
-
         // When
         playGame.playerScored(Player.PLAYER_A, match);
         Game game = match.getGames().peekLast();
