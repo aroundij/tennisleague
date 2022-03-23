@@ -2,7 +2,7 @@
 package io.aroundij.tennisleague.service.impl;
 
 import io.aroundij.tennisleague.domain.Game;
-import io.aroundij.tennisleague.domain.Match;
+import io.aroundij.tennisleague.domain.GameSet;
 import io.aroundij.tennisleague.domain.Player;
 import io.aroundij.tennisleague.domain.Score;
 import io.aroundij.tennisleague.service.PlayGame;
@@ -16,8 +16,8 @@ public class PlayClassicalGameImpl implements PlayGame {
      * @return new Match
      */
     @Override
-    public Match startMatch() {
-        Match match = new Match();
+    public GameSet startMatch() {
+        GameSet match = new GameSet();
         match.getGames().addLast(new Game());
         return match;
     }
@@ -77,7 +77,7 @@ public class PlayClassicalGameImpl implements PlayGame {
      * @param match The current match containing the current game
      */
     @Override
-    public void playerScored(Player player, Match match) {
+    public void playerScored(Player player, GameSet match) {
         if (Objects.isNull(match)) {
             return;
         }

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import io.aroundij.tennisleague.domain.Game;
-import io.aroundij.tennisleague.domain.Match;
+import io.aroundij.tennisleague.domain.GameSet;
 import io.aroundij.tennisleague.domain.Player;
 import io.aroundij.tennisleague.domain.Score;
 import io.aroundij.tennisleague.service.PlayGame;
@@ -23,7 +23,7 @@ class PlayClassicalGameTest {
         // Given game stats
 
         // When
-        Match match = playGame.startMatch();
+        GameSet match = playGame.startMatch();
 
         // Then
         assertNotNull(match);
@@ -122,7 +122,7 @@ class PlayClassicalGameTest {
     @Test
     void playerScored() {
         // Given
-        Match match = new Match();
+        GameSet match = new GameSet();
         match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
         Game lastGame = new Game();
         lastGame.getGameScore().setScoreA(Score.SCORE_15);
@@ -145,7 +145,7 @@ class PlayClassicalGameTest {
     @Test
     void playerScoredDEUCE() {
         // Given
-        Match match = new Match();
+        GameSet match = new GameSet();
         match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
         Game lastGame = new Game();
         lastGame.getGameScore().setScoreA(Score.SCORE_30);
@@ -165,7 +165,7 @@ class PlayClassicalGameTest {
         assertEquals(expectedScoreB, game.getGameScore().getScoreB());
 
         // Given
-        match = new Match();
+        match = new GameSet();
         match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
         lastGame = new Game();
         lastGame.getGameScore().setScoreA(Score.SCORE_DEUCE_ADV);
@@ -188,7 +188,7 @@ class PlayClassicalGameTest {
     @Test
     void playerScoredWithWinnerPlayerA() {
         // Given
-        Match match = new Match();
+        GameSet match = new GameSet();
         match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
         Game lastGame = new Game();
         lastGame.getGameScore().setScoreA(Score.SCORE_40);
@@ -214,7 +214,7 @@ class PlayClassicalGameTest {
     @Test
     void playerScoredWithWinnerPlayerB() {
         // Given
-        Match match = new Match();
+        GameSet match = new GameSet();
         match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
         Game lastGame = new Game();
         lastGame.getGameScore().setScoreA(Score.SCORE_30);
@@ -240,7 +240,7 @@ class PlayClassicalGameTest {
     @Test
     void playerScoredNewGame() {
         // Given
-        Match match = new Match();
+        GameSet match = new GameSet();
         match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
         Game lastGame = new Game();
         lastGame.getGameScore().setScoreA(Score.SCORE_WINNER);

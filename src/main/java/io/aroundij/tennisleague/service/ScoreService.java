@@ -2,10 +2,10 @@
 package io.aroundij.tennisleague.service;
 
 import io.aroundij.tennisleague.domain.Game;
-import io.aroundij.tennisleague.domain.Match;
+import io.aroundij.tennisleague.domain.GameSet;
 
 public interface ScoreService {
-    String getScore(Match match);
+    String getScore(GameSet match);
 
     String getScore(Game game);
 }
