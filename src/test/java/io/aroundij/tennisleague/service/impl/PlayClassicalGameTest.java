@@ -9,6 +9,7 @@ import io.aroundij.tennisleague.domain.Match;
 import io.aroundij.tennisleague.domain.Player;
 import io.aroundij.tennisleague.domain.Score;
 import io.aroundij.tennisleague.service.PlayGame;
+import io.aroundij.tennisleague.util.RelativeGameScore;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -37,89 +38,85 @@ class PlayClassicalGameTest {
 
     @Test
     void incrementScore() {
-        Score expectedScore = Score.SCORE_15;
-        Score score = Score.SCORE_0;
-        Score scoreAdversary = Score.SCORE_0;
-        Score scoreResult = Score.SCORE_0;
-
-        // Given Player A scored
-        expectedScore = Score.SCORE_15;
-        score = Score.SCORE_0;
-        scoreAdversary = Score.SCORE_0;
-        // When
-        scoreResult = playGame.incrementScore(score, scoreAdversary);
-        // Then
-        assertEquals(expectedScore, scoreResult);
 
         // Given
-        expectedScore = Score.SCORE_30;
-        score = Score.SCORE_15;
-        scoreAdversary = Score.SCORE_0;
-        // When
-        scoreResult = playGame.incrementScore(score, scoreAdversary);
-        // Then
-        assertEquals(expectedScore, scoreResult);
+        List<List<RelativeGameScore>> givenData =
+                List.of(
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_0, Score.SCORE_0),
+                                new RelativeGameScore(Score.SCORE_15, Score.SCORE_0)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_15, Score.SCORE_0),
+                                new RelativeGameScore(Score.SCORE_30, Score.SCORE_0)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_30, Score.SCORE_0),
+                                new RelativeGameScore(Score.SCORE_40, Score.SCORE_0)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_40, Score.SCORE_0),
+                                new RelativeGameScore(Score.SCORE_WINNER, Score.SCORE_LOSER)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_0, Score.SCORE_15),
+                                new RelativeGameScore(Score.SCORE_15, Score.SCORE_15)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_15, Score.SCORE_15),
+                                new RelativeGameScore(Score.SCORE_30, Score.SCORE_15)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_30, Score.SCORE_15),
+                                new RelativeGameScore(Score.SCORE_40, Score.SCORE_15)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_40, Score.SCORE_15),
+                                new RelativeGameScore(Score.SCORE_WINNER, Score.SCORE_LOSER)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_0, Score.SCORE_30),
+                                new RelativeGameScore(Score.SCORE_15, Score.SCORE_30)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_15, Score.SCORE_30),
+                                new RelativeGameScore(Score.SCORE_30, Score.SCORE_30)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_30, Score.SCORE_30),
+                                new RelativeGameScore(Score.SCORE_40, Score.SCORE_30)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_40, Score.SCORE_30),
+                                new RelativeGameScore(Score.SCORE_WINNER, Score.SCORE_LOSER)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_0, Score.SCORE_40),
+                                new RelativeGameScore(Score.SCORE_15, Score.SCORE_40)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_15, Score.SCORE_40),
+                                new RelativeGameScore(Score.SCORE_30, Score.SCORE_40)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_30, Score.SCORE_40),
+                                new RelativeGameScore(Score.SCORE_DEUCE, Score.SCORE_DEUCE)),
+                        List.of(
+                                new RelativeGameScore(Score.SCORE_DEUCE, Score.SCORE_DEUCE),
+                                new RelativeGameScore(
+                                        Score.SCORE_DEUCE_ADV, Score.SCORE_DEUCE_DOWN_TO_ADV)),
+                        List.of(
+                                new RelativeGameScore(
+                                        Score.SCORE_DEUCE_ADV, Score.SCORE_DEUCE_DOWN_TO_ADV),
+                                new RelativeGameScore(Score.SCORE_WINNER, Score.SCORE_LOSER)),
+                        List.of(
+                                new RelativeGameScore(
+                                        Score.SCORE_DEUCE_DOWN_TO_ADV, Score.SCORE_DEUCE_ADV),
+                                new RelativeGameScore(Score.SCORE_DEUCE, Score.SCORE_DEUCE)));
 
-        // Given
-        expectedScore = Score.SCORE_WINNER;
-        score = Score.SCORE_40;
-        scoreAdversary = Score.SCORE_30;
-        // When
-        scoreResult = playGame.incrementScore(score, scoreAdversary);
-        // Then
-        assertEquals(expectedScore, scoreResult);
+        for (List<RelativeGameScore> givenRelativeGameAndExpectedRelativeGame : givenData) {
+            // When
+            RelativeGameScore inputRelativeGameScore =
+                    givenRelativeGameAndExpectedRelativeGame.get(0);
+            RelativeGameScore expectedRelativeGameScore =
+                    givenRelativeGameAndExpectedRelativeGame.get(1);
 
-        // Given
-        expectedScore = Score.SCORE_ERR;
-        score = Score.SCORE_WINNER;
-        scoreAdversary = Score.SCORE_0;
-        // When
-        scoreResult = playGame.incrementScore(score, scoreAdversary);
-        // Then
-        assertEquals(expectedScore, scoreResult);
-    }
+            playGame.incrementScore(inputRelativeGameScore);
 
-    @Test
-    void incrementScoreDEUCE() {
-        Score expectedScore = Score.SCORE_15;
-        Score score = Score.SCORE_0;
-        Score scoreAdversary = Score.SCORE_0;
-        Score scoreResult = Score.SCORE_0;
-
-        // Given
-        expectedScore = Score.SCORE_DEUCE;
-        score = Score.SCORE_DEUCE_DOWN_TO_ADV;
-        scoreAdversary = Score.SCORE_DEUCE_ADV;
-        // When
-        scoreResult = playGame.incrementScore(score, scoreAdversary);
-        // Then
-        assertEquals(expectedScore, scoreResult);
-
-        // Given
-        expectedScore = Score.SCORE_DEUCE;
-        score = Score.SCORE_30;
-        scoreAdversary = Score.SCORE_40;
-        // When
-        scoreResult = playGame.incrementScore(score, scoreAdversary);
-        // Then
-        assertEquals(expectedScore, scoreResult);
-    }
-
-    @Test
-    void incrementScoreDEUCE_ADV() {
-        Score expectedScore = Score.SCORE_15;
-        Score score = Score.SCORE_0;
-        Score scoreAdversary = Score.SCORE_0;
-        Score scoreResult = Score.SCORE_0;
-
-        // Given
-        expectedScore = Score.SCORE_WINNER;
-        score = Score.SCORE_DEUCE_ADV;
-        scoreAdversary = Score.SCORE_DEUCE_DOWN_TO_ADV;
-        // When
-        scoreResult = playGame.incrementScore(score, scoreAdversary);
-        // Then
-        assertEquals(expectedScore, scoreResult);
+            // Then
+            assertEquals(
+                    expectedRelativeGameScore.getCurrentPlayerScore(),
+                    inputRelativeGameScore.getCurrentPlayerScore());
+            assertEquals(
+                    expectedRelativeGameScore.getOpponentScore(),
+                    inputRelativeGameScore.getOpponentScore());
+        }
     }
 
     @Test
@@ -189,7 +186,7 @@ class PlayClassicalGameTest {
     }
 
     @Test
-    void playerScoredWithWinner() {
+    void playerScoredWithWinnerPlayerA() {
         // Given
         Match match = new Match();
         match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
@@ -212,5 +209,56 @@ class PlayClassicalGameTest {
         assertEquals(expectedScoreA, game.getGameScore().getScoreA(), "Score of Player A FAILED");
         assertEquals(expectedScoreB, game.getGameScore().getScoreB(), "Score of Player B FAILED");
         assertEquals(expectedWinner, game.getWinner(), "Winner Result FAILED");
+    }
+
+    @Test
+    void playerScoredWithWinnerPlayerB() {
+        // Given
+        Match match = new Match();
+        match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
+        Game lastGame = new Game();
+        lastGame.getGameScore().setScoreA(Score.SCORE_30);
+        lastGame.getGameScore().setScoreB(Score.SCORE_40);
+        match.getGames().addLast(lastGame);
+
+        Score expectedScoreA = Score.SCORE_LOSER;
+        Score expectedScoreB = Score.SCORE_WINNER;
+
+        Player expectedWinner = Player.PLAYER_B;
+
+        // When
+        playGame.playerScored(Player.PLAYER_B, match);
+        Game game = match.getGames().peekLast();
+
+        // Then
+        assertNotNull(game);
+        assertEquals(expectedScoreA, game.getGameScore().getScoreA(), "Score of Player A FAILED");
+        assertEquals(expectedScoreB, game.getGameScore().getScoreB(), "Score of Player B FAILED");
+        assertEquals(expectedWinner, game.getWinner(), "Winner Result FAILED");
+    }
+
+    @Test
+    void playerScoredNewGame() {
+        // Given
+        Match match = new Match();
+        match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
+        Game lastGame = new Game();
+        lastGame.getGameScore().setScoreA(Score.SCORE_WINNER);
+        lastGame.getGameScore().setScoreB(Score.SCORE_LOSER);
+        lastGame.setWinner(Player.PLAYER_A);
+        match.getGames().addLast(lastGame);
+
+        Score expectedScoreA = Score.SCORE_15;
+        Score expectedScoreB = Score.SCORE_0;
+
+
+        // When
+        playGame.playerScored(Player.PLAYER_A, match);
+        Game game = match.getGames().peekLast();
+
+        // Then
+        assertNotNull(game);
+        assertEquals(expectedScoreA, game.getGameScore().getScoreA(), "Score of Player A FAILED");
+        assertEquals(expectedScoreB, game.getGameScore().getScoreB(), "Score of Player B FAILED");
     }
 }

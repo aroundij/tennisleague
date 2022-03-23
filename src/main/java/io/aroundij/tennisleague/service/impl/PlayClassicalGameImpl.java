@@ -6,6 +6,7 @@ import io.aroundij.tennisleague.domain.Match;
 import io.aroundij.tennisleague.domain.Player;
 import io.aroundij.tennisleague.domain.Score;
 import io.aroundij.tennisleague.service.PlayGame;
+import io.aroundij.tennisleague.util.RelativeGameScore;
 import java.util.Objects;
 
 public class PlayClassicalGameImpl implements PlayGame {
@@ -24,33 +25,47 @@ public class PlayClassicalGameImpl implements PlayGame {
     /**
      * Increment the score of the first parameters, depending on the global score.
      *
-     * @param scoreToIncrement The score to be incremented
-     * @param scoreOfAdversary The score of the opponent
+     * @param relativeGameScore
      * @return the incremented Score
      */
     @Override
-    public Score incrementScore(Score scoreToIncrement, Score scoreOfAdversary) {
+    public void incrementScore(RelativeGameScore relativeGameScore) {
+        Score scoreToIncrement = relativeGameScore.getCurrentPlayerScore();
+        Score scoreOfAdversary = relativeGameScore.getOpponentScore();
         switch (scoreToIncrement) {
             case SCORE_0:
-                return Score.SCORE_15;
+                relativeGameScore.setCurrentPlayerScore(Score.SCORE_15);
+                break;
             case SCORE_15:
-                return Score.SCORE_30;
+                relativeGameScore.setCurrentPlayerScore(Score.SCORE_30);
+                break;
             case SCORE_30:
                 switch (scoreOfAdversary) {
                     case SCORE_40:
-                        return Score.SCORE_DEUCE;
+                        relativeGameScore.setCurrentPlayerScore(Score.SCORE_DEUCE);
+                        relativeGameScore.setOpponentScore(Score.SCORE_DEUCE);
+                        break;
                     default:
-                        return Score.SCORE_40;
+                        relativeGameScore.setCurrentPlayerScore(Score.SCORE_40);
+                        break;
                 }
+                break;
             case SCORE_DEUCE:
-                return Score.SCORE_DEUCE_ADV;
+                relativeGameScore.setCurrentPlayerScore(Score.SCORE_DEUCE_ADV);
+                relativeGameScore.setOpponentScore(Score.SCORE_DEUCE_DOWN_TO_ADV);
+                break;
             case SCORE_DEUCE_DOWN_TO_ADV:
-                return Score.SCORE_DEUCE;
+                relativeGameScore.setCurrentPlayerScore(Score.SCORE_DEUCE);
+                relativeGameScore.setOpponentScore(Score.SCORE_DEUCE);
+                break;
             case SCORE_40:
             case SCORE_DEUCE_ADV:
-                return Score.SCORE_WINNER;
+                relativeGameScore.setCurrentPlayerScore(Score.SCORE_WINNER);
+                relativeGameScore.setOpponentScore(Score.SCORE_LOSER);
+                break;
             default:
-                return Score.SCORE_ERR;
+                relativeGameScore.setCurrentPlayerScore(Score.SCORE_ERR);
+                relativeGameScore.setOpponentScore(Score.SCORE_ERR);
         }
     }
 
@@ -78,28 +93,30 @@ public class PlayClassicalGameImpl implements PlayGame {
         switch (player) {
             case PLAYER_A:
                 {
-                    game.getGameScore().setScoreA(incrementScore(scorePlayerA, scorePlayerB));
-                    if (Score.SCORE_WINNER.equals(game.getGameScore().getScoreA())) {
-                        game.setWinner(Player.PLAYER_A);
-                        game.getGameScore().setScoreB(Score.SCORE_LOSER);
-                    } else if (Score.SCORE_DEUCE.equals(game.getGameScore().getScoreA())) {
-                        game.getGameScore().setScoreB(Score.SCORE_DEUCE);
-                    } else if (Score.SCORE_DEUCE_ADV.equals(game.getGameScore().getScoreA())) {
-                        game.getGameScore().setScoreB(Score.SCORE_DEUCE_DOWN_TO_ADV);
-                    }
+                    RelativeGameScore relativeGameScore =
+                            new RelativeGameScore(scorePlayerA, scorePlayerB);
+                    incrementScore(relativeGameScore);
+                    game.getGameScore().setScoreA(relativeGameScore.getCurrentPlayerScore());
+                    game.getGameScore().setScoreB(relativeGameScore.getOpponentScore());
+                    game.setWinner(
+                            Score.SCORE_WINNER.equals(relativeGameScore.getCurrentPlayerScore())
+                                    ? Player.PLAYER_A
+                                    : null);
                     break;
                 }
             case PLAYER_B:
                 {
-                    game.getGameScore().setScoreB(incrementScore(scorePlayerB, scorePlayerA));
-                    if (Score.SCORE_WINNER.equals(game.getGameScore().getScoreB())) {
-                        game.setWinner(Player.PLAYER_B);
-                        game.getGameScore().setScoreA(Score.SCORE_LOSER);
-                    } else if (Score.SCORE_DEUCE.equals(game.getGameScore().getScoreB())) {
-                        game.getGameScore().setScoreA(Score.SCORE_DEUCE);
-                    } else if (Score.SCORE_DEUCE_ADV.equals(game.getGameScore().getScoreB())) {
-                        game.getGameScore().setScoreA(Score.SCORE_DEUCE_DOWN_TO_ADV);
-                    }
+                    RelativeGameScore relativeGameScore =
+                            new RelativeGameScore(scorePlayerB, scorePlayerA);
+                    relativeGameScore.setCurrentPlayerScore(scorePlayerB);
+                    relativeGameScore.setOpponentScore(scorePlayerA);
+                    incrementScore(relativeGameScore);
+                    game.getGameScore().setScoreB(relativeGameScore.getCurrentPlayerScore());
+                    game.getGameScore().setScoreA(relativeGameScore.getOpponentScore());
+                    game.setWinner(
+                            Score.SCORE_WINNER.equals(relativeGameScore.getCurrentPlayerScore())
+                                    ? Player.PLAYER_B
+                                    : null);
                     break;
                 }
         }
