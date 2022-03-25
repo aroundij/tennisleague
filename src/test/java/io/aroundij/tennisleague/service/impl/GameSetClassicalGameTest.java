@@ -64,7 +64,26 @@ class GameSetClassicalGameTest {
                         List.of(new RelativeGameSetScore(5, 5), new RelativeGameSetScore(6, 5)),
                         List.of(
                                 new RelativeGameSetScore(6, 5),
-                                new RelativeGameSetScore(7, 5, true)));
+                                new RelativeGameSetScore(7, 5, true)),
+                        List.of(new RelativeGameSetScore(6, 6), new RelativeGameSetScore(7, 6)),
+                        List.of(
+                                new RelativeGameSetScore(7, 6),
+                                new RelativeGameSetScore(8, 6, true)),
+                        List.of(new RelativeGameSetScore(6, 7), new RelativeGameSetScore(7, 7)),
+                        List.of(new RelativeGameSetScore(7, 7), new RelativeGameSetScore(8, 7)),
+                        List.of(
+                                new RelativeGameSetScore(8, 7),
+                                new RelativeGameSetScore(9, 7, true)),
+                        List.of(new RelativeGameSetScore(7, 8), new RelativeGameSetScore(8, 8)),
+                        List.of(new RelativeGameSetScore(8, 8), new RelativeGameSetScore(9, 8)),
+                        List.of(
+                                new RelativeGameSetScore(9, 8),
+                                new RelativeGameSetScore(10, 8, true)),
+                        List.of(new RelativeGameSetScore(8, 9), new RelativeGameSetScore(9, 9)),
+                        List.of(new RelativeGameSetScore(9, 9), new RelativeGameSetScore(10, 9)),
+                        List.of(
+                                new RelativeGameSetScore(10, 9),
+                                new RelativeGameSetScore(11, 9, true)));
 
         for (List<RelativeGameSetScore> inputRelativeGameSetScoreAndExpectedGameSetScore :
                 inputData) {

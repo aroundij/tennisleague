@@ -4,36 +4,66 @@ package io.aroundij.tennisleague.service.impl;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import io.aroundij.tennisleague.domain.Game;
-import io.aroundij.tennisleague.domain.GameSet;
-import io.aroundij.tennisleague.domain.Player;
-import io.aroundij.tennisleague.domain.Score;
+import io.aroundij.tennisleague.domain.*;
+import io.aroundij.tennisleague.service.GameSetService;
 import io.aroundij.tennisleague.service.PlayGame;
 import io.aroundij.tennisleague.util.RelativeGameScore;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class PlayClassicalGameTest {
 
-    private PlayGame playGame = new PlayClassicalGameImpl();
+    private static PlayGame playGame;
+    private static GameSetService gameSetService;
+
+    @BeforeAll
+    static void init() {
+        gameSetService = new GameSetClassicalGame();
+        playGame = new PlayClassicalGameImpl(gameSetService);
+    }
 
     @Test
-    void startMatch() {
+    void startGameSet() {
 
-        // Given game stats
+        // Given game set just started
+        Score expectedScore = Score.SCORE_0;
+        int expectedGameSetScore = 0;
 
         // When
-        GameSet match = playGame.startMatch();
+        GameSet gameSet = playGame.startGameSet();
+
+        // Then
+        assertNotNull(gameSet);
+        assertNotNull(gameSet.getGames());
+        assertThat(gameSet.getGames().size() == 1);
+
+        Game game = gameSet.getGames().peekLast();
+        assertNotNull(game);
+        assertEquals(expectedScore, game.getGameScore().getScoreA());
+        assertEquals(expectedScore, game.getGameScore().getScoreB());
+
+        assertEquals(expectedGameSetScore, gameSet.getGameSetScore().getScoreA());
+        assertEquals(expectedGameSetScore, gameSet.getGameSetScore().getScoreB());
+    }
+
+    @Test
+    public void startMatch() {
+        // Given match just started
+        int expectedGameSetScore = 0;
+
+        // When
+        Match match = playGame.startMatch();
 
         // Then
         assertNotNull(match);
-        assertNotNull(match.getGames());
-        assertThat(match.getGames().size() == 1);
-
-        Game game = match.getGames().peekLast();
-        assertNotNull(game);
-        assertEquals(Score.SCORE_0, game.getGameScore().getScoreA());
-        assertEquals(Score.SCORE_0, game.getGameScore().getScoreB());
+        assertNotNull(match.getGameSets());
+        assertThat(!match.getGameSets().isEmpty());
+        GameSet gameSet = match.getGameSets().peekLast();
+        assertNotNull(gameSet);
+        assertNotNull(gameSet.getGameSetScore());
+        assertEquals(expectedGameSetScore, gameSet.getGameSetScore().getScoreA());
+        assertEquals(expectedGameSetScore, gameSet.getGameSetScore().getScoreB());
     }
 
     @Test
@@ -188,23 +218,52 @@ class PlayClassicalGameTest {
     @Test
     void playerScoredWithWinnerPlayerA() {
         // Given
-        GameSet match = new GameSet();
-        match.getGames().addAll(List.of(new Game(), new Game(), new Game()));
-        Game lastGame = new Game();
-        lastGame.getGameScore().setScoreA(Score.SCORE_40);
-        lastGame.getGameScore().setScoreB(Score.SCORE_30);
-        match.getGames().addLast(lastGame);
+        Match currentMatch = new Match();
+        currentMatch.getGameSets().addAll(List.of(new GameSet(), new GameSet(), new GameSet()));
+
+        GameSet currentGameSet = new GameSet();
+        currentGameSet.getGameSetScore().setScoreA(5);
+        currentGameSet.getGameSetScore().setScoreB(4);
+        currentMatch.getGameSets().addLast(currentGameSet);
+
+        currentGameSet.getGames().addAll(List.of(new Game(), new Game(), new Game()));
+        Game currentGame = new Game();
+        currentGame.getGameScore().setScoreA(Score.SCORE_40);
+        currentGame.getGameScore().setScoreB(Score.SCORE_30);
+        currentGameSet.getGames().addLast(currentGame);
 
         Score expectedScoreA = Score.SCORE_WINNER;
         Score expectedScoreB = Score.SCORE_LOSER;
 
+        int expectedSetScoreA = 6;
+        int expectedSetScoreB = 4;
+
         Player expectedWinner = Player.PLAYER_A;
 
         // When
-        playGame.playerScored(Player.PLAYER_A, match);
-        Game game = match.getGames().peekLast();
+        playGame.playerScored(Player.PLAYER_A, currentMatch);
 
         // Then
+        assertNotNull(currentMatch);
+        assertNotNull(currentMatch.getGameSets());
+
+        GameSet gameSet = currentMatch.getGameSets().peekLast();
+
+        assertNotNull(gameSet);
+        assertNotNull(gameSet.getGames());
+
+        assertEquals(
+                expectedSetScoreA,
+                gameSet.getGameSetScore().getScoreA(),
+                "Score of GameSet for Player A FAILED");
+        assertEquals(
+                expectedSetScoreB,
+                gameSet.getGameSetScore().getScoreB(),
+                "Score of GameSet for Player B FAILED");
+        assertEquals(expectedWinner, gameSet.getWinner());
+
+        Game game = currentGameSet.getGames().peekLast();
+
         assertNotNull(game);
         assertEquals(expectedScoreA, game.getGameScore().getScoreA(), "Score of Player A FAILED");
         assertEquals(expectedScoreB, game.getGameScore().getScoreB(), "Score of Player B FAILED");
