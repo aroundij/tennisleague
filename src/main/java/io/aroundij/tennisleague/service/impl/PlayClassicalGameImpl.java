@@ -1,24 +1,37 @@
 /* (C) 2022 */
 package io.aroundij.tennisleague.service.impl;
 
-import io.aroundij.tennisleague.domain.Game;
-import io.aroundij.tennisleague.domain.GameSet;
-import io.aroundij.tennisleague.domain.Player;
-import io.aroundij.tennisleague.domain.Score;
+import io.aroundij.tennisleague.domain.*;
+import io.aroundij.tennisleague.service.GameSetService;
 import io.aroundij.tennisleague.service.PlayGame;
 import io.aroundij.tennisleague.util.RelativeGameScore;
+import io.aroundij.tennisleague.util.RelativeGameSetScore;
 import java.util.Objects;
 
 public class PlayClassicalGameImpl implements PlayGame {
+
+    private GameSetService gameSetService;
+
+    public PlayClassicalGameImpl(GameSetService gameSetService) {
+        this.gameSetService = gameSetService;
+    }
+
     /**
      * Start a Match between two player, a match is a deque of Games.
      *
      * @return new Match
      */
     @Override
-    public GameSet startMatch() {
-        GameSet match = new GameSet();
-        match.getGames().addLast(new Game());
+    public GameSet startGameSet() {
+        GameSet gameSet = new GameSet();
+        gameSet.getGames().addLast(new Game());
+        return gameSet;
+    }
+
+    @Override
+    public Match startMatch() {
+        Match match = new Match();
+        match.getGameSets().addLast(startGameSet());
         return match;
     }
 
@@ -71,20 +84,20 @@ public class PlayClassicalGameImpl implements PlayGame {
 
     /**
      * Called when the player scores. It increments the score of the scoring player and persists the
-     * score to the last game in the match.
+     * score to the last game in the gameSet.
      *
      * @param player The scoring player
-     * @param match The current match containing the current game
+     * @param gameSet The current gameSet containing the current game
      */
     @Override
-    public void playerScored(Player player, GameSet match) {
-        if (Objects.isNull(match)) {
+    public void playerScored(Player player, GameSet gameSet) {
+        if (Objects.isNull(gameSet)) {
             return;
         }
-        Game game = match.getGames().peekLast();
+        Game game = gameSet.getGames().peekLast();
         if (Objects.nonNull(game.getWinner())) {
             game = new Game();
-            match.getGames().addLast(game);
+            gameSet.getGames().addLast(game);
         }
 
         Score scorePlayerA = game.getGameScore().getScoreA();
@@ -98,10 +111,9 @@ public class PlayClassicalGameImpl implements PlayGame {
                     incrementScore(relativeGameScore);
                     game.getGameScore().setScoreA(relativeGameScore.getCurrentPlayerScore());
                     game.getGameScore().setScoreB(relativeGameScore.getOpponentScore());
-                    game.setWinner(
-                            Score.SCORE_WINNER.equals(relativeGameScore.getCurrentPlayerScore())
-                                    ? Player.PLAYER_A
-                                    : null);
+                    if (Score.SCORE_WINNER.equals(relativeGameScore.getCurrentPlayerScore())) {
+                        game.setWinner(Player.PLAYER_A);
+                    }
                     break;
                 }
             case PLAYER_B:
@@ -119,6 +131,60 @@ public class PlayClassicalGameImpl implements PlayGame {
                                     : null);
                     break;
                 }
+        }
+    }
+
+    @Override
+    public void playerScored(Player player, Match match) {
+        if (Objects.isNull(match)
+                || Objects.isNull(match.getGameSets())
+                || match.getGameSets().isEmpty()) return;
+        GameSet currentGameSet = match.getGameSets().peekLast();
+
+        if (Objects.nonNull(currentGameSet) && Objects.nonNull(currentGameSet.getWinner())) {
+            currentGameSet = startGameSet();
+            match.getGameSets().addLast(currentGameSet);
+        }
+
+        playerScored(player, currentGameSet);
+
+        Game currentGame = currentGameSet.getGames().peekLast();
+
+        switch (player) {
+            case PLAYER_A:
+                if (Score.SCORE_WINNER.equals(currentGame.getGameScore().getScoreA())) {
+                    RelativeGameSetScore relativeGameSetScore =
+                            new RelativeGameSetScore(
+                                    currentGameSet.getGameSetScore().getScoreA(),
+                                    currentGameSet.getGameSetScore().getScoreB());
+                    gameSetService.incrementGameSetScore(relativeGameSetScore);
+                    currentGameSet
+                            .getGameSetScore()
+                            .setScoreA(relativeGameSetScore.getCurrentPlayerSetScore());
+                    currentGameSet
+                            .getGameSetScore()
+                            .setScoreB(relativeGameSetScore.getOpponentSetScore());
+                    currentGameSet.setWinner(
+                            relativeGameSetScore.isWinner() ? Player.PLAYER_A : null);
+                }
+                break;
+            case PLAYER_B:
+                if (Score.SCORE_WINNER.equals(currentGame.getGameScore().getScoreB())) {
+                    RelativeGameSetScore relativeGameSetScore =
+                            new RelativeGameSetScore(
+                                    currentGameSet.getGameSetScore().getScoreB(),
+                                    currentGameSet.getGameSetScore().getScoreA());
+                    gameSetService.incrementGameSetScore(relativeGameSetScore);
+                    currentGameSet
+                            .getGameSetScore()
+                            .setScoreB(relativeGameSetScore.getCurrentPlayerSetScore());
+                    currentGameSet
+                            .getGameSetScore()
+                            .setScoreA(relativeGameSetScore.getOpponentSetScore());
+                    currentGameSet.setWinner(
+                            relativeGameSetScore.isWinner() ? Player.PLAYER_B : null);
+                }
+                break;
         }
     }
 }

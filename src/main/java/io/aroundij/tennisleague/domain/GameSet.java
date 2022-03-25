@@ -11,7 +11,7 @@ import java.util.Deque;
 public class GameSet {
     private Deque<Game> games = new ArrayDeque<>();
 
-    private GameSetScore gameSetScore;
+    private GameSetScore gameSetScore = new GameSetScore();
     private Player winner;
 
     public Deque<Game> getGames() {

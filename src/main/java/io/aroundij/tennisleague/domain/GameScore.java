@@ -40,6 +40,6 @@ public class GameScore {
 
     @Override
     public String toString() {
-        return "Score Player A : " + scoreA.getValue() + " Score Player B : " + scoreB.getValue();
+        return "GameScore{" + "scorePlayerA=" + scoreA + ", scorePlayerB=" + scoreB + '}';
     }
 }

@@ -1,10 +1,12 @@
 /* (C) 2022 */
 package io.aroundij.tennisleague;
 
-import io.aroundij.tennisleague.domain.GameSet;
+import io.aroundij.tennisleague.domain.Match;
 import io.aroundij.tennisleague.domain.Player;
+import io.aroundij.tennisleague.service.GameSetService;
 import io.aroundij.tennisleague.service.PlayGame;
 import io.aroundij.tennisleague.service.ScoreService;
+import io.aroundij.tennisleague.service.impl.GameSetClassicalGame;
 import io.aroundij.tennisleague.service.impl.PlayClassicalGameImpl;
 import io.aroundij.tennisleague.service.impl.ScoreClassicalGameImpl;
 import java.util.Scanner;
@@ -17,9 +19,13 @@ public class Main {
         // O position is included
 
         Scanner scanner = new Scanner(System.in);
-        PlayGame playGame = new PlayClassicalGameImpl();
+
+        // Initiating services
+        GameSetService gameSetService = new GameSetClassicalGame();
+        PlayGame playGame = new PlayClassicalGameImpl(gameSetService);
         ScoreService scoreService = new ScoreClassicalGameImpl();
-        GameSet match = playGame.startMatch();
+
+        Match match = playGame.startMatch();
         int i = 0;
 
         System.out.println("This is a Tennis Match !");

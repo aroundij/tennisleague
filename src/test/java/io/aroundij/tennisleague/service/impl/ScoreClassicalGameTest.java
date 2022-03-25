@@ -9,7 +9,7 @@ import io.aroundij.tennisleague.domain.Score;
 import io.aroundij.tennisleague.service.ScoreService;
 import org.junit.jupiter.api.Test;
 
-class ScoreClassicalGameImplTest {
+class ScoreClassicalGameTest {
 
     private ScoreService scoreService = new ScoreClassicalGameImpl();
 
